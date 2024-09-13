@@ -44,7 +44,8 @@ if(path == "/")
 }
 else if(path.Contains("/echo/"))
 {
-    response = $"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: 3\r\n\r\n{path.Split('/')[^1]}";
+    var str = path.Split('/')[^1];
+    response = $"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: {str.Length}\r\n\r\n{str}";
 }
 else
 {
