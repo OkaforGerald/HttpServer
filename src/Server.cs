@@ -9,6 +9,7 @@ server.Start();
 var client = server.AcceptTcpClient();
 var response = "";
 var stream = client.GetStream();
+var writer = new StreamWriter(stream);
 byte[] buffer = new byte[1];
 var memStream = new MemoryStream();
 
@@ -42,8 +43,6 @@ else
 {
     response = "HTTP/1.1 200 OK\r\n\r\n";
 }
-
-var writer = new StreamWriter(stream);
 
 writer.AutoFlush = true;
 writer.NewLine = "\r\n";
