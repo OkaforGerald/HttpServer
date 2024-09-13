@@ -32,6 +32,7 @@ else
 }
 
 var writer = new StreamWriter(stream);
+
 writer.AutoFlush = true;
 writer.NewLine = "\r\n";
 
