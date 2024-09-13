@@ -52,7 +52,7 @@ void HandleClientCommunication(object tcpClient)
         response = $"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: {str.Length}\r\n\r\n{str}";
     }else if (path.StartsWith("/files"))
     {
-        var file = path.Split('/')[1];
+        var file = path.Split('/')[^1];
         Console.WriteLine(Path.Combine(args[2], file));
         if (File.Exists(Path.Combine(args[2], file)))
         {
