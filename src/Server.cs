@@ -41,7 +41,7 @@ void HandleClientCommunication(object tcpClient)
 
     var tokens = request[0].Split(' ');
     var path = tokens[1];
-
+    var args = Environment.GetCommandLineArgs();
     if (path == "/")
     {
         response = "HTTP/1.1 200 OK\r\n\r\n";
@@ -53,10 +53,10 @@ void HandleClientCommunication(object tcpClient)
     }else if (path.StartsWith("/files"))
     {
         var file = path.Split('/')[1];
-        if (File.Exists($"{Directory.GetCurrentDirectory}/tmp/{file}"))
+        if (File.Exists(Path.Combine(args[2], file)))
         {
             byte[] buffer = new byte[1024];
-            var info = new FileInfo($"{Directory.GetCurrentDirectory}/tmp/{file}");
+            var info = new FileInfo(Path.Combine(args[2], file));
             using(var fstream = info.OpenRead())
             {
                 fstream.Write(buffer, 0, buffer.Length);
