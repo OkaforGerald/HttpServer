@@ -11,34 +11,20 @@ server.Start();
 var client = server.AcceptTcpClient();
 var response = "";
 var stream = client.GetStream();
+var reader = new StreamReader(stream);
 var writer = new StreamWriter(stream);
 
-byte[] buffer = new byte[1];
-var memStream = new MemoryStream();
-
-while (stream != null && await stream.ReadAsync(buffer, 0, buffer.Length) == 1)
+var request = new List<string>();
+string line;
+while(!string.IsNullOrEmpty(line = reader.ReadLine()))
 {
-    switch (buffer[0])
-    {
-        case (byte)'\n':
-            stream = null;
-            break;
-
-        case (byte)'\r':
-            break;
-
-        default:
-            memStream.WriteByte(buffer[0]);
-            break;
-    }
+    request.Add(line);
 }
 
-var request = Encoding.UTF8.GetString(memStream.ToArray());
-
-var tokens = request.Split(' ');
+var tokens = request[0].Split(' ');
 var path = tokens[1];
 
-if(path == "/")
+if (path == "/")
 {
     response = "HTTP/1.1 200 OK\r\n\r\n";
 }
@@ -46,6 +32,11 @@ else if(path.Contains("/echo/"))
 {
     var str = path.Split('/')[^1];
     response = $"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: {str.Length}\r\n\r\n{str}";
+}else if (path.Contains("/user-agent"))
+{
+    var header = request.FirstOrDefault(x => x.StartsWith("User-Agent:"));
+    var value = header.Split(':')[1].Trim();
+    response = $"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: {value}\r\n\r\n{value}";
 }
 else
 {
@@ -57,4 +48,4 @@ writer.NewLine = "\r\n";
 
 writer.WriteLine(response);
 
-// stream.Close();
+stream.Close();
