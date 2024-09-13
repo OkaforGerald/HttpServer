@@ -60,7 +60,7 @@ void HandleClientCommunication(object tcpClient)
             var info = new FileInfo(Path.Combine(Directory.GetCurrentDirectory(),args[2], file));
             using(var fstream = info.OpenRead())
             {
-                fstream.Write(buffer, 0, buffer.Length);
+                fstream.Read(buffer, 0, buffer.Length);
             }
 
             var content = Encoding.UTF8.GetString(buffer);
