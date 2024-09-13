@@ -54,10 +54,10 @@ void HandleClientCommunication(object tcpClient)
     {
         var file = path.Split('/')[^1];
         Console.WriteLine(Path.Combine(args[2], file));
-        if (File.Exists(Path.Combine(args[2], file)))
+        if (File.Exists(Path.Combine(Directory.GetCurrentDirectory(), args[2], file)))
         {
             byte[] buffer = new byte[1024];
-            var info = new FileInfo(Path.Combine(args[2], file));
+            var info = new FileInfo(Path.Combine(Directory.GetCurrentDirectory(),args[2], file));
             using(var fstream = info.OpenRead())
             {
                 fstream.Write(buffer, 0, buffer.Length);
