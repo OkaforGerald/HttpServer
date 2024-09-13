@@ -38,7 +38,7 @@ var request = Encoding.UTF8.GetString(memStream.ToArray());
 var tokens = request.Split(' ');
 var path = tokens[1];
 
-if(path != "/")
+if(path == "/")
 {
     response = "HTTP/1.1 404 Not Found\r\n\r\n";
 }
@@ -56,4 +56,4 @@ writer.NewLine = "\r\n";
 
 writer.WriteLine(response);
 
-stream.Close();
+// stream.Close();
