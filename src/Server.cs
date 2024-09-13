@@ -40,7 +40,7 @@ var path = tokens[1];
 
 if(path == "/")
 {
-    response = "HTTP/1.1 404 Not Found\r\n\r\n";
+    response = "HTTP/1.1 200 OK\r\n\r\n";
 }
 else if(path.Contains("/echo/"))
 {
@@ -49,7 +49,7 @@ else if(path.Contains("/echo/"))
 }
 else
 {
-    response = "HTTP/1.1 200 OK\r\n\r\n";
+    response = "HTTP/1.1 404 Not Found\r\n\r\n";
 }
 
 writer.AutoFlush = true;
