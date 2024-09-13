@@ -36,7 +36,7 @@ else if(path.Contains("/echo/"))
 {
     var header = request.FirstOrDefault(x => x.StartsWith("User-Agent:"));
     var value = header.Split(':')[1].Trim();
-    response = $"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: {value}\r\n\r\n{value}";
+    response = $"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: {value.Length}\r\n\r\n{value}";
 }
 else
 {
