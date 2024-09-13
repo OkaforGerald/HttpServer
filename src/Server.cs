@@ -1,6 +1,8 @@
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using static System.Net.Mime.MediaTypeNames;
+using static System.Net.WebRequestMethods;
 
 Console.WriteLine("Logs from your program will appear here!");
 
@@ -10,6 +12,7 @@ var client = server.AcceptTcpClient();
 var response = "";
 var stream = client.GetStream();
 var writer = new StreamWriter(stream);
+
 byte[] buffer = new byte[1];
 var memStream = new MemoryStream();
 
@@ -38,6 +41,10 @@ var path = tokens[1];
 if(path != "/")
 {
     response = "HTTP/1.1 404 Not Found\r\n\r\n";
+}
+else if(path.Contains("/echo/"))
+{
+    response = $"HTTP / 1.1 200 OK\r\nContent - Type: text / plain\r\nContent - Length: 3\r\n\r\n{path.Split('/')[^1]}";
 }
 else
 {
