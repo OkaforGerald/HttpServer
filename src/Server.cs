@@ -40,7 +40,7 @@ async void HandleClientCommunication(object tcpClient)
     string line;
     
     var buffer = new byte[1024];
-    stream.ReadTimeout = 5000;
+    stream.ReadTimeout = 1000;
     try
     {
         while (true)
