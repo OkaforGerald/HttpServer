@@ -37,22 +37,54 @@ async void HandleClientCommunication(object tcpClient)
     var stream = client.GetStream();
 
     var writer = new StreamWriter(stream);
+
     string line;
-    
     var buffer = new byte[1024];
     stream.ReadTimeout = 1000;
+    List<byte> requestData = new List<byte>();
+
     try
     {
         while (true)
         {
-            var bytesRead = stream.Read(buffer);
+            int bytesRead;
+            try
+            {
+                bytesRead = stream.Read(buffer, 0, buffer.Length);
+                if (bytesRead == 0) break;
+                requestData.AddRange(new ArraySegment<byte>(buffer, 0, bytesRead));
+            }
+            catch (IOException)
+            {
+                if (requestData.Count > 0) break;
+                Console.WriteLine("Stream Timeout with no data!");
+                return;
+            }
         }
-    }catch(IOException e)
-    {
-        Console.WriteLine("Stream Timeout!");
     }
-    
-    line = Encoding.UTF8.GetString(buffer);
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Error reading from stream: {ex.Message}");
+        return;
+    }
+
+    line = Encoding.UTF8.GetString(requestData.ToArray());
+    //string line;
+
+    //var buffer = new byte[1024];
+    //stream.ReadTimeout = 1000;
+    //try
+    //{
+    //    while (true)
+    //    {
+    //        var bytesRead = stream.Read(buffer);
+    //    }
+    //}catch(IOException e)
+    //{
+    //    Console.WriteLine("Stream Timeout!");
+    //}
+
+    //line = Encoding.UTF8.GetString(buffer);
     var request = line.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
     request[^1] = request[^1].Replace("\0", "");
 
