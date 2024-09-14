@@ -40,7 +40,7 @@ void HandleClientCommunication(object tcpClient)
 
     var request = new List<string>();
     string line;
-    while (!string.IsNullOrEmpty(line = reader.ReadLine()))
+    while (!(line = reader.ReadLine()).Equals(string.Empty))
     {
         request.Add(line);
     }
