@@ -30,20 +30,31 @@ var serverThread = new Thread(new ThreadStart(() =>
 
 serverThread.Start();
 
-void HandleClientCommunication(object tcpClient)
+async void HandleClientCommunication(object tcpClient)
 {
     var client = (TcpClient)tcpClient;
     var response = "";
     var stream = client.GetStream();
     var reader = new StreamReader(stream);
     var writer = new StreamWriter(stream);
-
-    var request = new List<string>();
     string line;
-    while (!(line = reader.ReadLine()).Equals(string.Empty))
+    
+    var buffer = new byte[1024];
+    stream.ReadTimeout = 1000;
+    try
     {
-        request.Add(line);
+        while (true)
+        {
+            var bytesRead = stream.Read(buffer);
+        }
+    }catch(IOException e)
+    {
+        Console.WriteLine("Stream Timeout!");
     }
+    
+    line = Encoding.UTF8.GetString(buffer);
+    var request = line.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
+    request[^1] = request[^1].Replace("\0", "");
 
     var tokens = request[0].Split(' ');
     var path = tokens[1];
@@ -66,15 +77,15 @@ void HandleClientCommunication(object tcpClient)
 
         if (File.Exists(Path.Combine(Directory.GetCurrentDirectory(), args[2], file)))
         {
-            byte[] buffer = new byte[1024];
+            byte[] fbuffer = new byte[1024];
             int Size = 0;
             using(var fstream = File.OpenRead(Path.Combine(Directory.GetCurrentDirectory(), args[2], file)))
             {
-                fstream.Read(buffer, 0, buffer.Length);
+                fstream.Read(fbuffer, 0, fbuffer.Length);
                 Size = (int)fstream.Length;
             }
 
-            var content = Encoding.UTF8.GetString(buffer);
+            var content = Encoding.UTF8.GetString(fbuffer);
 
             response = PrepareOkResponse(ContentType: "application/octet-stream", Length: Size, Body: content);
         }
