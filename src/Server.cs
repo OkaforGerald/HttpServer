@@ -48,6 +48,7 @@ void HandleClientCommunication(object tcpClient)
     var tokens = request[0].Split(' ');
     var path = tokens[1];
     var requestBody = request[^1];
+    Console.WriteLine(String.Join("," ,request));
     var args = Environment.GetCommandLineArgs();
     if (path == "/")
     {
