@@ -35,7 +35,7 @@ async void HandleClientCommunication(object tcpClient)
     var client = (TcpClient)tcpClient;
     var response = "";
     var stream = client.GetStream();
-    var reader = new StreamReader(stream);
+
     var writer = new StreamWriter(stream);
     string line;
     
