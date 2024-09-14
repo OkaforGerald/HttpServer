@@ -39,27 +39,29 @@ async void HandleClientCommunication(object tcpClient)
     var writer = new StreamWriter(stream);
 
     string line;
+
     var buffer = new byte[1024];
     stream.ReadTimeout = 1000;
     List<byte> requestData = new List<byte>();
 
     try
     {
-        while (true)
+        int bytesRead;
+        do
         {
-            int bytesRead;
-            try
+            bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length);
+            if (bytesRead > 0)
             {
-                bytesRead = stream.Read(buffer, 0, buffer.Length);
-                if (bytesRead == 0) break;
                 requestData.AddRange(new ArraySegment<byte>(buffer, 0, bytesRead));
             }
-            catch (IOException)
-            {
-                if (requestData.Count > 0) break;
-                Console.WriteLine("Stream Timeout with no data!");
-                return;
-            }
+        } while (bytesRead > 0 && !requestData.Contains((byte)'\n'));
+    }
+    catch (IOException)
+    {
+        Console.WriteLine("Stream Timeout!");
+        if (requestData.Count == 0)
+        {
+            return; // No data received, just return
         }
     }
     catch (Exception ex)
@@ -147,7 +149,8 @@ async void HandleClientCommunication(object tcpClient)
     writer.AutoFlush = true;
     writer.NewLine = "\r\n";
 
-    writer.WriteLine(response);
+    await writer.WriteLineAsync(response);
 
-    stream.Close();
+    client.Close();
+    //stream.Close();
 }
