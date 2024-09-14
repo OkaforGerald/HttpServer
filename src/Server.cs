@@ -71,22 +71,8 @@ async void HandleClientCommunication(object tcpClient)
     }
 
     line = Encoding.UTF8.GetString(requestData.ToArray());
-    //string line;
 
-    //var buffer = new byte[1024];
-    //stream.ReadTimeout = 1000;
-    //try
-    //{
-    //    while (true)
-    //    {
-    //        var bytesRead = stream.Read(buffer);
-    //    }
-    //}catch(IOException e)
-    //{
-    //    Console.WriteLine("Stream Timeout!");
-    //}
 
-    //line = Encoding.UTF8.GetString(buffer);
     var request = line.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
     request[^1] = request[^1].Replace("\0", "");
 
