@@ -23,6 +23,8 @@ namespace codecrafters_http_server
 
             server.MapGet("/echo", ctx =>
             {
+                var arguments = Environment.GetCommandLineArgs();
+                Console.WriteLine(string.Join("\n", arguments));
                 var _ = ctx.Headers.TryGetValue("Accept-Encoding", out string? encoding);
 
                 return encoding is null ? server.PrepareOkResponse(ContentType: "text/plain",
