@@ -12,7 +12,6 @@ namespace codecrafters_http_server
     {
         public static void Main(string[] args)
         {
-            var arguments = Environment.GetCommandLineArgs();
             Server server = new Server();
 
             server.MapGet("/", body => server.PrepareOkResponse() );
@@ -33,16 +32,16 @@ namespace codecrafters_http_server
 
             server.MapGet("/files", ctx =>
             {
-                if (File.Exists(Path.Combine(Directory.GetCurrentDirectory(), args[2], ctx.Parameter)))
+                var arguments = Environment.GetCommandLineArgs();
+                if (File.Exists(Path.Combine(Directory.GetCurrentDirectory(), arguments[2], ctx.Parameter)))
                 {
                     byte[] buffer = new byte[1024];
                     int Size = 0;
-                    using (var fstream = File.OpenRead(Path.Combine(Directory.GetCurrentDirectory(), args[2], ctx.Parameter)))
+                    using (var fstream = File.OpenRead(Path.Combine(Directory.GetCurrentDirectory(), arguments[2], ctx.Parameter)))
                     {
                         fstream.Read(buffer, 0, buffer.Length);
                         Size = (int)fstream.Length;
                     }
-                    Console.WriteLine($"GOT HERE {args[2]}");
                     var content = Encoding.UTF8.GetString(buffer);
 
                     return server.PrepareOkResponse(ContentType: "application/octet-stream", Length: Size, Body: content);
@@ -55,7 +54,8 @@ namespace codecrafters_http_server
 
             server.MapPost("/files", ctx =>
             {
-                File.WriteAllText(Path.Combine(Directory.GetCurrentDirectory(), args[2], ctx.Parameter), ctx.Body);
+                var arguments = Environment.GetCommandLineArgs();
+                File.WriteAllText(Path.Combine(Directory.GetCurrentDirectory(), arguments[2], ctx.Parameter), ctx.Body);
 
                 return server.CreatedResponse;
             });
