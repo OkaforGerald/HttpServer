@@ -13,7 +13,11 @@ namespace codecrafters_http_server
     {
         int port;
         public string NotFoundResponse = "HTTP/1.1 404 Not Found\r\n\r\n";
-        public string PrepareOkResponse(string? ContentType = null, int? Length = null, string? Body = null) => Body is null ? "HTTP/1.1 200 OK\r\n\r\n" : $"HTTP/1.1 200 OK\r\nContent-Type: {ContentType}\r\nContent-Length: {Length}\r\n\r\n{Body}";
+        public string PrepareOkResponse(string? ContentType = null, int? Length = null, string? Body = null, string? Encoding = null) => Body is null ?
+            "HTTP/1.1 200 OK\r\n\r\n" : Encoding == null ?
+            $"HTTP/1.1 200 OK\r\nContent-Type: {ContentType}\r\nContent-Length: {Length}\r\n\r\n{Body}"
+            : $"HTTP/1.1 200 OK\r\nContent-Type: {ContentType}\r\nContent-Encoding: {Encoding}\r\nContent-Length: {Length}\r\n\r\n{Body}";
+
         public string CreatedResponse = "HTTP/1.1 201 Created\r\n\r\n";
 
         public Server(int port)
@@ -91,57 +95,8 @@ namespace codecrafters_http_server
             var request = line.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
 
             var ctx = HttpContext.ParseRequest(line);
-            request[^1] = request[^1].Replace("\0", "");
-
-            var tokens = request[0].Split(' ');
-            var path = tokens[1];
-            var requestBody = request[^1];
-
             //Log Request
             Console.WriteLine(String.Join("\n", request));
-
-            var args = Environment.GetCommandLineArgs();
-
-            if (path.StartsWith("/echo"))
-            {
-                var str = path.Split('/')[^1];
-                response = PrepareOkResponse(ContentType: "text/plain", Length: str.Length, Body: str);
-            }
-            else if (path.StartsWith("/files") && tokens[0].Equals("GET"))
-            {
-                var file = path.Split('/')[^1];
-
-                if (File.Exists(Path.Combine(Directory.GetCurrentDirectory(), args[2], file)))
-                {
-                    byte[] fbuffer = new byte[1024];
-                    int Size = 0;
-                    using (var fstream = File.OpenRead(Path.Combine(Directory.GetCurrentDirectory(), args[2], file)))
-                    {
-                        fstream.Read(fbuffer, 0, fbuffer.Length);
-                        Size = (int)fstream.Length;
-                    }
-
-                    var content = Encoding.UTF8.GetString(fbuffer);
-
-                    response = PrepareOkResponse(ContentType: "application/octet-stream", Length: Size, Body: content);
-                }
-                else
-                {
-                    response = NotFoundResponse;
-                }
-            }
-            else if (path.StartsWith("/files") && tokens[0].Equals("POST"))
-            {
-                var file = path.Split('/')[^1];
-
-                File.WriteAllText(Path.Combine(Directory.GetCurrentDirectory(), args[2], file), requestBody);
-
-                response = CreatedResponse;
-            }
-            else
-            {
-                response = NotFoundResponse;
-            }
 
             if (response.Equals(NotFoundResponse))
             {
