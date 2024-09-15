@@ -96,7 +96,7 @@ public class Server
         var path = tokens[1];
         var requestBody = request[^1];
 
-        //Log
+        //Log Request
         Console.WriteLine(String.Join("\n", request));
 
         var args = Environment.GetCommandLineArgs();
