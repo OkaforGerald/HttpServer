@@ -1,5 +1,7 @@
-﻿using System;
+﻿using ICSharpCode.SharpZipLib.GZip;
+using System;
 using System.Collections.Generic;
+using System.IO.Compression;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -58,11 +60,13 @@ namespace codecrafters_http_server
                         if(gzipExists)
                         {
                             Headers.Add(kv[0].Trim(), "gzip");
+                            body = Compress(body);
                         }
                     }
                     else if(kv[0].Trim().Equals("Accept-Encoding"))
                     {
                         if (kv[1].Trim().Equals("gzip")) Headers.Add(kv[0].Trim(), "gzip");
+                        body = Compress(body);
                     }
                     else
                     {
@@ -72,6 +76,31 @@ namespace codecrafters_http_server
                }
 
             return new HttpContext { Headers = Headers, Body = body, Path = path, Action = action, Parameter = param };
+        }
+
+        public static string Compress(string input)
+        {
+            byte[] encoded = Encoding.UTF8.GetBytes(input);
+            byte[] compressed = Compress(encoded);
+            return Convert.ToHexString(compressed);
+        }
+
+        public static byte[] Compress(byte[] input)
+        {
+            using (var result = new MemoryStream())
+            {
+                var lengthBytes = BitConverter.GetBytes(input.Length);
+                result.Write(lengthBytes, 0, 4);
+
+                using (var compressionStream = new GZipStream(result,
+                    CompressionMode.Compress))
+                {
+                    compressionStream.Write(input, 0, input.Length);
+                    compressionStream.Flush();
+
+                }
+                return result.ToArray();
+            }
         }
     }
 }
