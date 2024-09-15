@@ -4,8 +4,7 @@ using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Sockets;
 using System.Text;
-using static System.Net.Mime.MediaTypeNames;
-using static System.Net.WebRequestMethods;
+using HttpContext = codecrafters_http_server.HttpContext;
 using File = System.IO.File;
 
 namespace codecrafters_http_server
