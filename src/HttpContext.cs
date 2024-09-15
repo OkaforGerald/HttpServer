@@ -66,7 +66,7 @@ namespace codecrafters_http_server
                     }
                     else
                     {
-                        Headers.Add(kv[0].Trim(), "gzip");
+                        Headers.Add(kv[0].Trim(), kv[1].Trim());
                     }    
                     i++;
                }
