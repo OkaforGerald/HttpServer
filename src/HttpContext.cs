@@ -12,6 +12,9 @@ namespace codecrafters_http_server
 
         public string Path { get; set; }
 
+        //This assumes only one parameter in route, Come back
+        public string Parameter { get; set; }
+
         public string Body { get; set; }
 
         public Dictionary<string, string> Headers { get; set; }
@@ -24,6 +27,14 @@ namespace codecrafters_http_server
 
                 var rtokens = tokens[0].Split(' ');
                 var path = rtokens[1];
+                var pathTokens = path.Split('/', StringSplitOptions.RemoveEmptyEntries);
+                path = $"/{pathTokens[0]}";
+                string param = "";
+                if (pathTokens.Length == 2)
+                {
+                    param = pathTokens[^1];
+                }
+
                 var action = rtokens[0];
 
                 var body = tokens[^1].Replace("\0", "");
@@ -40,7 +51,7 @@ namespace codecrafters_http_server
                     i++;
                 }
 
-            return new HttpContext { Headers = Headers, Body = body, Path = path, Action = action };
+            return new HttpContext { Headers = Headers, Body = body, Path = path, Action = action, Parameter = param };
         }
     }
 }

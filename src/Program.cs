@@ -23,24 +23,21 @@ namespace codecrafters_http_server
 
             server.MapGet("/echo", ctx =>
             {
-                var str = ctx.Path.Split('/')[^1];
                 var compression = ctx.Headers.TryGetValue("Accept-Encoding", out string? encoding);
                 return encoding is null ? server.PrepareOkResponse(ContentType: "text/plain",
-                    Length: str.Length,
-                    Body: str) : server.PrepareOkResponse(ContentType: "text/plain",
-                    Length: str.Length,
-                    Body: str, Encoding: encoding);
+                    Length: ctx.Parameter.Length,
+                    Body: ctx.Parameter) : server.PrepareOkResponse(ContentType: "text/plain",
+                    Length: ctx.Parameter.Length,
+                    Body: ctx.Parameter, Encoding: encoding);
             });
 
             server.MapGet("/files", ctx =>
             {
-                var file = ctx.Path.Split('/')[^1];
-
-                if (File.Exists(Path.Combine(Directory.GetCurrentDirectory(), args[2], file)))
+                if (File.Exists(Path.Combine(Directory.GetCurrentDirectory(), args[2], ctx.Parameter)))
                 {
                     byte[] buffer = new byte[1024];
                     int Size = 0;
-                    using (var fstream = File.OpenRead(Path.Combine(Directory.GetCurrentDirectory(), args[2], file)))
+                    using (var fstream = File.OpenRead(Path.Combine(Directory.GetCurrentDirectory(), args[2], ctx.Parameter)))
                     {
                         fstream.Read(buffer, 0, buffer.Length);
                         Size = (int)fstream.Length;
@@ -58,9 +55,7 @@ namespace codecrafters_http_server
 
             server.MapPost("/files", ctx =>
             {
-                var file = ctx.Path.Split('/')[^1];
-
-                File.WriteAllText(Path.Combine(Directory.GetCurrentDirectory(), args[2], file), ctx.Body);
+                File.WriteAllText(Path.Combine(Directory.GetCurrentDirectory(), args[2], ctx.Parameter), ctx.Body);
 
                 return server.CreatedResponse;
             });

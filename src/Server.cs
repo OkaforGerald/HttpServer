@@ -98,16 +98,13 @@ namespace codecrafters_http_server
             //Log Request
             Console.WriteLine(String.Join("\n", request));
 
-            if (response.Equals(NotFoundResponse))
+            try
             {
-                try
-                {
-                    response = RouteHandler.RouteRequest(ctx);
-                }
-                catch (Exception ex)
-                {
-                    response = NotFoundResponse;
-                }
+                response = RouteHandler.RouteRequest(ctx);
+            }
+            catch (Exception ex)
+            {
+                response = NotFoundResponse;
             }
 
             writer.AutoFlush = true;
