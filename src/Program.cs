@@ -24,7 +24,7 @@ namespace codecrafters_http_server
             server.MapGet("/echo", ctx =>
             {
                 var compression = ctx.Headers.TryGetValue("Accept-Encoding", out string? encoding);
-                return encoding is null && !encoding.Equals("gzip", StringComparison.OrdinalIgnoreCase) ? server.PrepareOkResponse(ContentType: "text/plain",
+                return encoding is null || !encoding.Equals("gzip", StringComparison.OrdinalIgnoreCase) ? server.PrepareOkResponse(ContentType: "text/plain",
                     Length: ctx.Parameter.Length,
                     Body: ctx.Parameter) : server.PrepareOkResponse(ContentType: "text/plain",
                     Length: ctx.Parameter.Length,
