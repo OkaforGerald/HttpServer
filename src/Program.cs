@@ -15,10 +15,10 @@ namespace codecrafters_http_server
         {
             Server server = new Server();
 
-            server.MapGet("/", body => server.PrepareOkResponse() );
+            server.MapGet("/", body => server.PrepareOkResponse());
 
-            server.MapGet("/user-agent", ctx => server.PrepareOkResponse(ContentType: "text/plain", 
-                Length: ctx.Headers["User-Agent"].Length, 
+            server.MapGet("/user-agent", ctx => server.PrepareOkResponse(ContentType: "text/plain",
+                Length: ctx.Headers["User-Agent"].Length,
                 Body: ctx.Headers["User-Agent"]));
 
             server.MapGet("/echo", ctx =>
@@ -28,7 +28,7 @@ namespace codecrafters_http_server
                 return encoding is null ? server.PrepareOkResponse(ContentType: "text/plain",
                     Length: ctx.Parameter.Length,
                     Body: ctx.Parameter) : server.PrepareOkResponse(ContentType: "text/plain",
-                    Length: Compress(ctx.Parameter).Length,
+                    Length: Compress(ctx.Parameter).Length / 2,
                     Body: Compress(ctx.Parameter), Encoding: encoding);
             });
 
@@ -74,19 +74,17 @@ namespace codecrafters_http_server
 
         public static byte[] Compress(byte[] input)
         {
-            using (var result = new MemoryStream())
+            using (var source = new MemoryStream(input))
             {
-                var lengthBytes = BitConverter.GetBytes(input.Length);
-                result.Write(lengthBytes, 0, 4);
-
-                using (var compressionStream = new GZipStream(result,
-                    CompressionMode.Compress))
+                using (var result = new MemoryStream())
                 {
-                    compressionStream.Write(input, 0, input.Length);
-                    compressionStream.Flush();
+                    using (var Compress = new GZipStream(result, CompressionMode.Compress))
+                    {
+                        source.CopyTo(Compress);
+                    }
 
+                    return result.ToArray();
                 }
-                return result.ToArray();
             }
         }
     }
