@@ -31,7 +31,7 @@ namespace codecrafters_http_server
                     Length: ctx.Parameter.Length,
                     Body: ctx.Parameter) : server.PrepareOkResponse(ContentType: "text/plain",
                     Length: Compress(ctx.Parameter).Length,
-                    body: Compress(ctx.Parameter), Encoding: encoding);
+                    Body: Convert.ToHexString(Compress(ctx.Parameter)), Encoding: encoding);
             });
 
             server.MapGet("/files", ctx =>

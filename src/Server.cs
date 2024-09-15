@@ -13,10 +13,10 @@ namespace codecrafters_http_server
     {
         int port;
         public string NotFoundResponse = "HTTP/1.1 404 Not Found\r\n\r\n";
-        public string PrepareOkResponse(string? ContentType = null, int? Length = null, string? Body = null, byte[]? body = null, string? Encoding = null) => Body is null && body is null?
+        public string PrepareOkResponse(string? ContentType = null, int? Length = null, string? Body = null, string? Encoding = null) => Body is null?
             "HTTP/1.1 200 OK\r\n\r\n" : Encoding == null ?
             $"HTTP/1.1 200 OK\r\nContent-Type: {ContentType}\r\nContent-Length: {Length}\r\n\r\n{Body}"
-            : $"HTTP/1.1 200 OK\r\nContent-Type: {ContentType}\r\nContent-Encoding: {Encoding}\r\nContent-Length: {Length}\r\n\r\n{body}";
+            : $"HTTP/1.1 200 OK\r\nContent-Type: {ContentType}\r\nContent-Encoding: {Encoding}\r\nContent-Length: {Length}\r\n\r\n{Body}";
 
         public string CreatedResponse = "HTTP/1.1 201 Created\r\n\r\n";
 
