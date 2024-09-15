@@ -42,7 +42,7 @@ namespace codecrafters_http_server
                         fstream.Read(buffer, 0, buffer.Length);
                         Size = (int)fstream.Length;
                     }
-
+                    Console.WriteLine($"GOT HERE {args[2]}");
                     var content = Encoding.UTF8.GetString(buffer);
 
                     return server.PrepareOkResponse(ContentType: "application/octet-stream", Length: Size, Body: content);
