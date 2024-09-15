@@ -52,9 +52,24 @@ namespace codecrafters_http_server
                     var line = tokens[i];
 
                     var kv = line.Split(':');
-                    Headers.Add(kv[0].Trim(), kv[1].Trim());
+                    if (kv[0].Trim().Equals("Accept-Encoding") && kv[1].Contains(','))
+                    {
+                        var gzipExists = kv[1].Split(',').Any(kv => kv.Trim().Equals("gzip"));
+                        if(gzipExists)
+                        {
+                            Headers.Add(kv[0].Trim(), "gzip");
+                        }
+                    }
+                    else if(kv[0].Trim().Equals("Accept-Encoding"))
+                    {
+                        if (kv[1].Trim().Equals("gzip")) Headers.Add(kv[0].Trim(), "gzip");
+                    }
+                    else
+                    {
+                        Headers.Add(kv[0].Trim(), "gzip");
+                    }    
                     i++;
-                }
+               }
 
             return new HttpContext { Headers = Headers, Body = body, Path = path, Action = action, Parameter = param };
         }
