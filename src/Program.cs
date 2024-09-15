@@ -30,8 +30,8 @@ namespace codecrafters_http_server
                 return encoding is null ? server.PrepareOkResponse(ContentType: "text/plain",
                     Length: ctx.Parameter.Length,
                     Body: ctx.Parameter) : server.PrepareOkResponse(ContentType: "text/plain",
-                    Length: Compress(ctx.Parameter).Length / 2,
-                    Body: Compress(ctx.Parameter), Encoding: encoding);
+                    Length: Compress(ctx.Parameter).Length,
+                    body: Compress(ctx.Parameter), Encoding: encoding);
             });
 
             server.MapGet("/files", ctx =>
@@ -67,11 +67,11 @@ namespace codecrafters_http_server
             server.Run();
         }
 
-        public static string Compress(string input)
+        public static byte[] Compress(string input)
         {
             byte[] encoded = Encoding.UTF8.GetBytes(input);
             byte[] compressed = Compress(encoded);
-            return Convert.ToHexString(compressed);
+            return compressed;
         }
 
         public static byte[] Compress(byte[] input)
