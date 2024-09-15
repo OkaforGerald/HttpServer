@@ -28,13 +28,18 @@ namespace codecrafters_http_server
                 var rtokens = tokens[0].Split(' ');
                 var path = rtokens[1];
                 var pathTokens = path.Split('/', StringSplitOptions.RemoveEmptyEntries);
-                path = $"/{pathTokens[0]}";
                 string param = "";
-                if (pathTokens.Length == 2)
-                {
-                    param = pathTokens[^1];
+                if (pathTokens.Length == 0) {
+                    path = "/";
                 }
-
+                else
+                {
+                    path = $"/{pathTokens[0]}";
+                    if (pathTokens.Length == 2)
+                    {
+                        param = pathTokens[^1];
+                    }
+                }
                 var action = rtokens[0];
 
                 var body = tokens[^1].Replace("\0", "");
