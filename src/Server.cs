@@ -115,11 +115,15 @@ namespace codecrafters_http_server
             writer.AutoFlush = true;
             //writer.NewLine = "\r\n";
 
-            await writer.WriteLineAsync(response);
             if (arr is not null)
             {
-                await stream.WriteAsync(arr, 0, arr.Length);
+                byte[] bresponse = [.. Encoding.UTF8.GetBytes(response), .. arr];
+                await stream.WriteAsync(bresponse, 0, bresponse.Length);
                 stream.Flush();
+            }
+            else
+            {
+                await writer.WriteLineAsync(response);
             }
 
             client.Close();
