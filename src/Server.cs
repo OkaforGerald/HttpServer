@@ -116,7 +116,10 @@ namespace codecrafters_http_server
             writer.NewLine = "\r\n";
 
             await writer.WriteLineAsync(response);
-            if (arr is not null) writer.Write(arr);
+            if (arr is not null)
+            {
+                await stream.WriteAsync(arr, 0, arr.Length);
+            }
 
             client.Close();
         }
