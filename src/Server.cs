@@ -113,12 +113,13 @@ namespace codecrafters_http_server
             }
 
             writer.AutoFlush = true;
-            writer.NewLine = "\r\n";
+            //writer.NewLine = "\r\n";
 
             await writer.WriteLineAsync(response);
             if (arr is not null)
             {
                 await stream.WriteAsync(arr, 0, arr.Length);
+                stream.Flush();
             }
 
             client.Close();
